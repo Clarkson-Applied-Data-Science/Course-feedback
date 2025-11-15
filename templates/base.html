@@ -1,0 +1,67 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Home</title>
+      {% else %}
+      <title>Welcome to Course feedback giving app</title>
+      {% endif %}
+	   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+ 
+       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
+    </head>
+    <body>
+       <header id="masthead" class="site-header" role="banner">
+				<div class="header-inner">
+					<a href="https://intranet.clarkson.edu/" class="custom-logo-link" rel="home" data-wpel-link="internal">
+                        <img width="200" height="200" src="{{ url_for('static', filename='img/cropped-logo.png') }}" class="custom-logo" alt="Clarkson University"  
+                    sizes="(max-width: 9999px) 100vw, 9999px">
+                    </a>	
+                    {% if session.get("user_id") %}
+        <nav class="main-nav">
+  <ul class="nav-list"> 
+    <li><a href="/home">Home</a></li>
+ 
+    <li class="dropdown">
+      <button class="dropbtn">Courses &#9662;</button>
+      <div class="dropdown-content">
+        <a href="/courses">My Courses</a>
+        <a href="/suggest_course">Suggest Course</a>
+      </div>
+    </li>
+ 
+    <li class="dropdown">
+      <button class="dropbtn">Feedback &#9662;</button>
+      <div class="dropdown-content">
+        <a href="/give_feedback">Give Feedback</a>
+        <a href="/view_feedback">My Feedback</a>
+      </div>
+    </li>
+ 
+    {% if session.get("role") == 'admin' %}
+    <li class="dropdown">
+      <button class="dropbtn">Admin &#9662;</button>
+      <div class="dropdown-content">
+        <a href="/admin_dashboard">Admin Dashboard</a>
+      </div>
+    </li>
+    {% endif %}
+
+   <li class="dropdown">
+      <button class="dropbtn">Welcome {{ session.get("user")['name'] }} &#9662;</button>
+      <div class="dropdown-content">
+        <a href="/change_password">Change password</a>
+        <a href="/logout">Logout</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+        {% endif %}
+	
+				</div>
+		</header>
+        <div class="container">  
+        {% block content %}{% endblock %}
+         </div>
+    </body>
+</html>

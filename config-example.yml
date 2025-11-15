@@ -1,0 +1,7 @@
+db:
+  user: ''
+  pw: ''
+  host: ''
+  db: ''
+tables:
+  user: 'users'

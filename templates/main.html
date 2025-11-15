@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Main menu</h1>
+      <div id="menumsg">
+		Hello, {{ me.name }}  ({{ me.uid }}, {{ me.role }})
+	  </div>
+	<br><br>
+
+	{% if me.role == 'admin'  %}
+	<a href="/users/manage">Manage Users</a><br> 
+	{% endif %}
+	
+	<a href="/logout">Logout</a><br>
+	
+	
+{% endblock %}
