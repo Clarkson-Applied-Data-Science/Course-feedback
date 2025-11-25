@@ -21,9 +21,9 @@
                     <tbody>
                         {% for obj in obj.data  %}
                         <tr>
-                            <td><a href="manage?pkval={{ obj.uid }}">Edit</a></td>
-                            <td>{{ obj.email }}</td>
-                            <td>{{ obj.name }}</td>
+                            <td><a href="manage?pkval={{ obj.UserId }}">Edit</a></td>
+                            <td>{{ obj.Email }}</td>
+                            <td>{{ obj.UserName }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

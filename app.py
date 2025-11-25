@@ -36,7 +36,7 @@ def login():
         if u.tryLogin(un, pw):
             print(f"login ok as {u.data[0]['email']}")
             session['user_id'] = u.data[0][u.pk]
-            session['role'] = u.data[0]["role"]
+            session['role'] = u.data[0]['role']
             session['user'] = u.data[0]
             session['active'] = time.time()
             return redirect('main')

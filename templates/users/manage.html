@@ -11,11 +11,11 @@
             <div>
                 <form action="manage?action=update&pkval={{ obj.data[0][obj.pk] }}" method="POST">
                     Name:<br>
-                    <input type="text" name="name" value="{{ obj.data[0].name }}" />
+                    <input type="text" name="name" value="{{ obj.data[0].UserName }}" />
                     <br>
 
                     Email:<br>
-                    <input type="text" name="email" value="{{ obj.data[0].email }}" />
+                    <input type="text" name="email" value="{{ obj.data[0].Email }}" />
                     <br>
 
                     Password:<br>
