@@ -3,7 +3,8 @@ from flask import render_template
 from flask import request, session, redirect, url_for, send_from_directory, make_response
 from flask_session import Session
 from datetime import timedelta
-from user import user
+from models.user import user
+from models.course import course
 import time
 
 app = Flask(__name__, static_url_path='')
@@ -134,6 +135,16 @@ def checkSession():
             return True
     else:
         return False
+
+@app.route('/courses/list_courses')
+def list_courses():
+    if checkSession() == False:
+        return redirect('/login')
+    o = course()
+    courseID = request.args.get('courseID')
+    if courseID is None:
+        o.getAll()
+        return render_template('courses/list.html', obj=o)
 
 
 if __name__ == '__main__':

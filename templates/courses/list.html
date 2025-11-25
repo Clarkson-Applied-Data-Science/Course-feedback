@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Courses</h1>
+    
+	<br><br>
+
+	            <div>
+                
+
+                <div> <a href="manage?pkval=new">Create new</a> </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th cla>Edit</th>
+                            <th>Course Name</th>
+                            <th>Description</th>
+                             <th>Department Name</th>
+                              <th>Semestered Offered</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in obj.data  %}
+                        <tr>
+                            <td><a href="manage?courseID={{ obj.courseID }}">Edit</a></td>
+                            <td>{{ obj.courseName }}</td>
+                            <td>{{ obj.description }}</td>
+                             <td>{{ obj.departmentName }}</td>
+                              <td>{{ obj.semesterOffered }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+               
+            </div>
+	
+	
+	
+{% endblock %}
