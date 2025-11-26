@@ -8,7 +8,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	margin: 0;
 	outline: 0;
 	padding: 0;
-	vertical-align: baseline;
+ 
 }
 
 html,
@@ -79,8 +79,18 @@ th,
 td {
 	font-weight: normal;
 	text-align: left;
+	padding: 10px 5px;
+	text-align: justify; 
 }
-
+th,td{
+	vertical-align: bottom;
+}
+th{
+	background-color: #f2f2f2;
+	font-weight: bold;
+	bottom: 1px;
+	text-align: center;
+}
 blockquote:before,
 blockquote:after,
 q:before,
@@ -123,7 +133,13 @@ h6 {
 	font-weight: 700;
 	font-family: 'Raleway', arial, sans-serif;
 }
+.title{
+	font-size: 2.5rem;
+	margin-bottom: 20px;
+	font-weight: 700;
+	text-align: left;
 
+}
 p {
 	margin-bottom: 1.6em;
 }
@@ -138,4 +154,31 @@ strong {
     max-width: 1200px;   
     margin: 50px auto;      
     padding: 20px; 
+}
+
+.data-table{
+	width: 100%; 
+	border-collapse: collapse; 
+	margin-bottom: 20px;
+}
+.button{ 
+	border: none; 
+	color: white; 
+	padding: 5px 10px; 
+	text-align: center; 
+	text-decoration: none; 
+	display: inline-block; 
+	font-size: 14px; 
+	margin: 2px 1px; 
+	cursor: pointer; 
+	border-radius: 4px; 
+}
+.button-edit{
+	background-color: #4CAF50;  
+}
+.button-delete{
+	background-color: #4f4f4f;  
+}
+.button-create{
+background-color: #fd8d58; 
 }

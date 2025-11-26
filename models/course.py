@@ -29,7 +29,7 @@ class course(baseObject):
             self.errors.append('Name must be greater than two character.')
         c = course()
         c.getByField('courseName',self.data[0]['courseName'])
-        if len(c.data) > 0:
+        if len(c.data) > 0 and c.data[0][c.pk] != self.data[0][self.pk]:
             self.errors.append(f"This course already exist ({self.data[0]['courseName']})")
         #
         if len(self.errors) == 0:

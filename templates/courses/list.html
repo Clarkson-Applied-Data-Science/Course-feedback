@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Courses</h1>
+    <h1 class="title">Courses</h1>
     
 	<br><br>
 
 	            <div>
                 
 
-                <div> <a href="manage?pkval=new">Create new</a> </div>
+                <div> <a class="button button-create" href="manage?pkval=new">Create new</a> </div>
 
-                <table>
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th cla>Edit</th>
+                            {% if session.get("role") == 'admin' %} 
+                            <th >Edit</th>
+                            {% endif %}
                             <th>Course Name</th>
                             <th>Description</th>
                              <th>Department Name</th>
@@ -23,8 +25,9 @@
                     <tbody>
                         {% for obj in obj.data  %}
                         <tr>
-                            <td><a href="manage?courseID={{ obj.courseID }}">Edit</a></td>
-                            <td>{{ obj.courseName }}</td>
+                             <td><a class="button button-edit" href="manage?pkval={{ obj.courseID }}">Edit</a></td>
+                            
+                             <td>{{ obj.courseName }}</td>
                             <td>{{ obj.description }}</td>
                              <td>{{ obj.departmentName }}</td>
                               <td>{{ obj.semesterOffered }}</td>

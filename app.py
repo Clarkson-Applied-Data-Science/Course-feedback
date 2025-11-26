@@ -19,7 +19,7 @@ sess.init_app(app)
 
 @app.route('/')
 def home():
-    return render_template('login.html', title='Login', msg='Please log in to continue.')
+    return render_template('main.html', title='Home', msg='')
 
 
 @app.context_processor
@@ -102,6 +102,62 @@ def manage_user():
     else:
         o.getById(pkval)
         return render_template('users/manage.html', obj=o)
+
+@app.route('/courses/manage', methods=['GET', 'POST'])
+def manage_course():
+    if checkSession() == False:
+        return redirect('/login')
+    o = course() 
+    action = request.args.get('action')
+    pkval = request.args.get('pkval')
+    if action is not None and action == 'delete':
+        o.deleteById(pkval)
+        return render_template('ok_dialog.html', msg=f"Record ID {pkval} Deleted.")
+    
+    if action is not None and action == 'insert':
+        d = {}
+        d['courseName'] = request.form.get('courseName')
+        d['description'] = request.form.get('description')
+        d['semesterOffered'] = request.form.get('semesterOffered')
+        d['startDate'] = request.form.get('startDate')
+        d['endDate'] = request.form.get('endDate')
+        d['departments'] = request.form.get('departments')
+        o.set(d)
+        if o.verify_new():
+            o.insert()
+            return render_template('ok_dialog.html', msg=f"Course {o.data[0][o.pk]} added.")
+        else:
+            return render_template('courses/add.html', obj=o)
+    if action is not None and action == 'update':
+        o.getById(pkval)
+        
+        o.data[0]['courseName'] = request.form.get('courseName')
+        o.data[0]['description'] = request.form.get('description')
+        o.data[0]['semesterOffered'] = request.form.get('semesterOffered')
+        o.data[0]['startDate'] = request.form.get('startDate')
+        o.data[0]['endDate'] = request.form.get('endDate')
+        o.data[0]['departmentName'] = request.form.get('department')
+        if o.verify_update():
+            o.update()
+            return render_template('ok_dialog.html', msg="Course updated. ")
+        else:
+            return render_template('courses/manage.html', obj=o)
+
+    if pkval is None:
+        o.getAll()
+        return render_template('courses/list.html', obj=o)
+    if pkval == 'new':
+        o.createBlank()
+        o.data[0]['departments'] = ["Data science", 'Computer Science', 'Mathematics', 'Physics', 'Chemistry']
+        o.data[0]['semester'] = ['Fall', 'Spring']
+       
+        return render_template('courses/add.html', obj=o)
+    else:
+        o.getById(pkval)
+        o.data[0]['departments'] = ["Data science", 'Computer Science', 'Mathematics', 'Physics', 'Chemistry']
+        o.data[0]['semester'] = ['Fall', 'Spring']
+        return render_template('courses/manage.html', obj=o)
+
 
 
 @app.route('/session', methods=['GET', 'POST'])
