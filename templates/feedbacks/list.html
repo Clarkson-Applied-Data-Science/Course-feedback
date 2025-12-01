@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="title">Feedbacks</h1>
+    
+    <br><br>
+
+    <div>
+        <div>
+            <a class="button button-create" href="manage?pkval=new">Create new</a>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr> 
+                        <th>Edit</th> 
+                    <th>Feedback Text</th>
+                    <th>Course Name</th>
+                    <th>Date Given</th>
+                    <th>Status</th> 
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in obj.data %}
+                <tr>
+                    {% if feedback.status == 'pending' %} 
+                        <td>
+                            <a class="button button-edit" href="manage?pkval={{ feedback.feedbackID }}">
+                                Edit
+                            </a>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    
+                    <td>{{ feedback.feedbackText }}</td>
+                    <td>{{ feedback.courseName }}</td>  
+                    <td>{{ feedback.dateGiven }}</td>
+                    <td>{{ feedback.status }}</td> 
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

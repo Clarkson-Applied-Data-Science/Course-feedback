@@ -5,7 +5,8 @@ from flask_session import Session
 from datetime import timedelta
 from models.user import user
 from models.course import course
-import time
+from models.feedback import feedback
+import time 
 
 app = Flask(__name__, static_url_path='')
 
@@ -19,6 +20,8 @@ sess.init_app(app)
 
 @app.route('/')
 def home():
+    if checkSession() == False:
+        return redirect('/login')
     return render_template('main.html', title='Home', msg='')
 
 
@@ -158,7 +161,85 @@ def manage_course():
         o.data[0]['semester'] = ['Fall', 'Spring']
         return render_template('courses/manage.html', obj=o)
 
+@app.route('/feedbacks/manage', methods=['GET', 'POST'])
+def manage_feedback():
+    if checkSession() == False:
+        return redirect('/login')
+    o = feedback()           
+    action = request.args.get('action')
+    pkval = request.args.get('pkval')
 
+    if action is not None and action == 'delete':
+        o.deleteById(pkval)
+        return render_template('ok_dialog.html', msg=f"Feedback ID {pkval} Deleted.")
+
+    if action is not None and action == 'insert':
+        d = {}
+        d['feedbackText'] = request.form.get('feedbackText')
+        d['dateGiven']    = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        d['status']       = "pending"
+        d['courseID']     = request.form.get('courseID') 
+
+        d['uuid']  = session['user_id']
+
+        o.set(d)
+        if o.verify_new():
+            o.insert()
+            return render_template('ok_dialog.html', msg=f"Feedback {o.data[0][o.pk]} added.")
+        else: 
+            c = course()
+            c.getAll()
+            o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
+            return render_template('feedbacks/add.html', obj=o)
+
+    
+    if action is not None and action == 'update':
+        o.getById(pkval)
+
+        o.data[0]['feedbackText'] = request.form.get('feedbackText')
+        o.data[0]['status']       = "pending"
+        o.data[0]['courseID']     = request.form.get('courseID') 
+        o.data[0]['uuid']         = session['user_id']
+
+        if o.verify_update():
+            o.update()
+            return render_template('ok_dialog.html', msg="Feedback updated.")
+        else:
+            c = course()
+            c.getAll()
+            o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
+            return render_template('feedbacks/manage.html', obj=o)
+
+   
+    if pkval is None:
+        o.getAll()
+        return render_template('feedbacks/list.html', obj=o)
+
+    
+    if pkval == 'new':
+        o.createBlank()
+        f = feedback()
+        f.getByFields({"uuid": session['user_id']}, op="AND")
+        given_course_ids = [row['courseID'] for row in f.data]
+
+        c = course()
+        c.getNotIn('courseID', given_course_ids)
+        o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
+
+        return render_template('feedbacks/add.html', obj=o)
+
+    else:
+        o.getById(pkval)
+        f = feedback()
+        f.getByFields({"uuid": session['user_id']}, op="AND")
+        given_course_ids = [row['courseID'] for row in f.data]
+
+        c = course()
+        c.getNotIn('courseID', given_course_ids)
+        o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
+
+
+        return render_template('feedbacks/manage.html', obj=o)
 
 @app.route('/session', methods=['GET', 'POST'])
 def session_test():
@@ -201,6 +282,24 @@ def list_courses():
     if courseID is None:
         o.getAll()
         return render_template('courses/list.html', obj=o)
+
+@app.route('/feedbacks/give_feedback')
+def list_feedback():
+    if checkSession() == False:
+        return redirect('/login')
+    o = feedback()
+    feedbackID = request.args.get('feedbackID')
+    if feedbackID is None:
+        o.getByField('uuid', session['user_id'])
+        for co in o.data:
+            c = course()
+            print(co)
+            c.getById(co['courseID'])
+            if len(c.data) > 0:
+                co['courseName'] = c.data[0]['courseName']
+            else:
+                co['courseName'] = "Unknown Course"
+        return render_template('feedbacks/list.html', obj=o)
 
 
 if __name__ == '__main__':

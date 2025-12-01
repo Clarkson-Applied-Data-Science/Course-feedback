@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="error_text">
+        {% if obj.errors | length > 0 %}
+            {% for error in obj.errors  %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div>
+        <form action="manage?action=insert" method="POST">
+            Feedback Text:<br>
+            <textarea name="feedbackText">{{ obj.data[0].feedbackText | default('', true) }}</textarea>
+            <br>
+
+            Course:<br>
+            <select name="courseID"> 
+                {% for course_id, course_name in obj.data[0].courses.items() %}
+                    {% if obj.data[0].courseID == course_id %}
+                        <option value="{{ course_id }}" selected="selected">
+                            {{ course_name }}
+                        </option>
+                    {% else %}
+                        <option value="{{ course_id }}">
+                            {{ course_name }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <br>
+             
+
+            <input type="submit" value="Submit" />
+        </form>
+    </div>
+{% endblock %}

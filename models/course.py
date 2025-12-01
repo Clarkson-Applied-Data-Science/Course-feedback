@@ -36,5 +36,14 @@ class course(baseObject):
             return True
         else:
             return False
-    
+    def getNotIn(self, fieldname, values): 
+        self.data = []
+        if not values:   
+            return self.getAll()
+        placeholders = ','.join(['%s'] * len(values))
+        sql = f"SELECT * FROM `{self.tn}` WHERE `{fieldname}` NOT IN ({placeholders});"
+        self.cur.execute(sql, values)
+
+        for row in self.cur:
+            self.data.append(row)
    

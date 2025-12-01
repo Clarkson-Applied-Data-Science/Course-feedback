@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="error_text">
+        {% if obj.errors | length > 0 %}
+            {% for error in obj.errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div> 
+        <form action="manage?action=update&pkval={{ obj.data[0][obj.pk] }}" method="POST">
+            Feedback Text:<br>
+            <textarea name="feedbackText">{{ obj.data[0].feedbackText }}</textarea>
+            <br>
+
+            Course:<br>
+            <select name="courseID">
+                {% for course_id, course_name in obj.data[0].courses.items() %}
+                    {% if obj.data[0].courseID == course_id %}
+                        <option selected="true" value="{{ course_id }}">{{ course_name }}</option>
+                    {% else %}
+                        <option value="{{ course_id }}">{{ course_name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <br>
+            <br>
+            <br>
+
+            <input type="submit" value="Submit" />
+        </form>
+ 
+        <div>
+            <br><br>
+            <a class="button button-delete" href="manage?pkval={{ obj.data[0][obj.pk] }}&action=delete">
+                Delete this Feedback
+            </a>
+        </div>
+    </div>
+{% endblock %}

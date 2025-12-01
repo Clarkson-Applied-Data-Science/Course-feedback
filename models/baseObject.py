@@ -89,7 +89,7 @@ class baseObject:
         self.cur.execute(sql, [value])
         for row in self.cur:
             self.data.append(row)
-
+    
     def deleteById(self, id):
         sql = f'''DELETE FROM `{self.tn}` WHERE `{self.pk}` = %s;'''
         self.cur.execute(sql, [id])
@@ -103,3 +103,27 @@ class baseObject:
         for field in self.fields:
             d[field] = ''
         self.set(d)
+    def getByFields(self, filters, op="AND"):
+        self.data = []
+
+        if not filters:
+            sql = f"SELECT * FROM `{self.tn}`;"
+            self.cur.execute(sql)
+        else:
+            op = op.upper()
+            if op not in ("AND", "OR"):
+                raise ValueError("op must be 'AND' or 'OR'")
+
+            where_clauses = []
+            values = []
+
+            for fieldname, value in filters.items():
+                where_clauses.append(f"`{fieldname}` = %s")
+                values.append(value)
+
+            where_sql = f" {op} ".join(where_clauses)
+            sql = f"SELECT * FROM `{self.tn}` WHERE {where_sql};"
+            self.cur.execute(sql, values)
+
+        for row in self.cur:
+            self.data.append(row)
