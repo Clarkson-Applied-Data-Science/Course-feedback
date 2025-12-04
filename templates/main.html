@@ -1,17 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Main menu</h1>
-      <div id="menumsg">
-		Hello, {{ me.Name }}  ({{ me.UserId }}, {{ me.Role }})
-	  </div>
-	<br><br>
+  <h1>Main menu</h1>
 
-	{% if me.role == 'admin'  %}
-	<a href="/users/manage">Manage Users</a><br> 
-	{% endif %}
-	
-	<a href="/logout">Logout</a><br>
-	
-	
+  {% if me.role == 'admin' %}
+    <h2>Admin Dashboard</h2>
+  
+
+    <div class="dashboard-cards"> 
+      <div class="stat-card">
+        <h3>Total Users</h3>
+ 
+        {% set total_users = 0 %}
+        {% for role_counts in stats.users %}
+          {% for role, count in role_counts.items() %}
+            {% set total_users = total_users + count %}
+          {% endfor %}
+        {% endfor %}
+
+        <p class="stat-value">{{ total_users }}</p>
+
+        <ul class="activity-list">
+          {% for role_counts in stats.users %}
+            {% for role, count in role_counts.items() %}
+              <li>{{ role }}: {{ count }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+ 
+      <div class="stat-card">
+        <h3>Total Courses</h3>
+
+        {% set total_courses = 0 %}
+        {% for dept_counts in stats.courses %}
+          {% for dept, count in dept_counts.items() %}
+            {% set total_courses = total_courses + count %}
+          {% endfor %}
+        {% endfor %}
+
+        <p class="stat-value">{{ total_courses }}</p>
+
+        <ul class="activity-list">
+          {% for dept_counts in stats.courses %}
+            {% for dept, count in dept_counts.items() %}
+              <li>{{ dept }}: {{ count }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+ 
+      <div class="stat-card">
+        <h3>Pending Feedback</h3>
+        <p class="stat-value">{{ stats.pending_feedback | default(0) }}</p>
+      </div>
+    </div>
+
+    <section class="dashboard-section">
+      <h3>Other</h3>
+      <ul class="activity-list">
+        <li>New course suggestions: {{ stats.new_suggestions_course | default(0) }}</li>
+      </ul>
+    </section>
+  {% endif %}
+
 {% endblock %}

@@ -20,7 +20,7 @@
         <nav class="main-nav">
   <ul class="nav-list"> 
     <li><a href="/">Home</a></li>
- 
+ {% if session.get("role") is not none %}
     <li class="dropdown">
       <button class="dropbtn">Courses &#9662;</button>
       <div class="dropdown-content">
@@ -28,31 +28,37 @@
         <a href="/courses/suggest_course">Suggest new course</a>
       </div>
     </li>
- 
+  {% endif %}
+ {% if session.get("role") == 'student' or session.get("role") == 'alumuni'%}
     <li class="dropdown">
       <button class="dropbtn">Feedback &#9662;</button>
       <div class="dropdown-content">
-        <a href="/feedbacks/give_feedback">Give Feedback</a>
-        <a href="/feedbacks/view_feedback">My Feedback</a>
+        <a href="/feedbacks/manage?pkval=new">Give Feedback</a>
+        <a href="/feedbacks/give_feedback">My Feedback</a>
       </div>
     </li>
- 
-    {% if session.get("role") == 'admin' %}
+  {% endif %}
+    {% if session.get("role") == 'admin' %} 
     <li class="dropdown">
-      <button class="dropbtn">Admin &#9662;</button>
+      <button class="dropbtn">Users &#9662;</button>
       <div class="dropdown-content">
-        <a href="/admin_dashboard">Admin Dashboard</a>
+        <a href="/users/manage?pkval=new">Add User</a>
       </div>
+      <div class="dropdown-content">
+        <a href="/users/manage">List User</a>
+      </div>
+      
     </li>
     {% endif %}
-
+{% if session.get("role") is not none %}
    <li class="dropdown">
       <button class="dropbtn">Welcome {{ session.get("user")['name'] }} &#9662;</button>
       <div class="dropdown-content">
-        <a href="/change_password">Change password</a>
+        <a href="/users/manage?pkval={{ session.get("user_id") }}">Change password</a>
         <a href="/logout">Logout</a>
       </div>
     </li>
+    {% endif %}
   </ul>
 </nav>
 

@@ -8,7 +8,10 @@ import hashlib
 class user(baseObject):
     def __init__(self):
         self.setup()
-        self.roles = [{'value':'admin','text':'admin'},{'value':'customer','text':'customer'}]
+        self.roles = [{'value':'admin','text':'admin'},
+                      {'value':'student','text':'student'},
+                      {'value':'instructor','text':'instructor'},
+                      {'value':'alumuni','text':'alumuni'}]
     def hashPassword(self,pw):
         pw = pw+'xyz'
         return hashlib.md5(pw.encode('utf-8')).hexdigest()
@@ -84,4 +87,11 @@ class user(baseObject):
         if len(self.data) == 1:
             return True
         return False
+    def get_admin_stats(self):
+        self.data = []
+        sql = f'''SELECT COUNT(*) as cnt,role FROM `{self.tn}` GROUP BY role;'''
+        self.cur.execute(sql)
+        for row in self.cur:
+             self.data.append({row["role"]: row["cnt"] }) 
+        
             

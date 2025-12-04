@@ -41,9 +41,24 @@ class course(baseObject):
         if not values:   
             return self.getAll()
         placeholders = ','.join(['%s'] * len(values))
-        sql = f"SELECT * FROM `{self.tn}` WHERE `{fieldname}` NOT IN ({placeholders});"
+        sql = f"SELECT role, COUNT(*) AS cnt FROM `{self.tn}` WHERE `{fieldname}` NOT IN ({placeholders});"
         self.cur.execute(sql, values)
 
         for row in self.cur:
             self.data.append(row)
-   
+    def get_course_stats_by_department(self):
+        self.data = []
+        sql = f"SELECT departmentName, COUNT(*) AS cnt FROM `{self.tn}` where isSuggestedBy IS NULL GROUP BY departmentName;"
+        self.cur.execute(sql)
+        for row in self.cur:
+            self.data.append({
+                 row["departmentName"]: row["cnt"]
+             }) 
+    def get_new_course_stats(self):
+        self.data = []
+        sql = f"SELECT COUNT(*) AS cnt FROM `{self.tn}` where isSuggestedBy IS NOT NULL;"
+        self.cur.execute(sql)
+        row = self.cur.fetchone()
+        return row["cnt"]
+            
+     

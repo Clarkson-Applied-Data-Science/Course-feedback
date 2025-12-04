@@ -34,4 +34,9 @@ class feedback(baseObject):
         else:
             return False
     
-   
+    def get_pending_feedback_count(self):
+        
+        sql = f"SELECT COUNT(*) AS cnt FROM `{self.tn}` WHERE status = 'pending';"
+        self.cur.execute(sql)
+        row = self.cur.fetchone()
+        return row["cnt"]

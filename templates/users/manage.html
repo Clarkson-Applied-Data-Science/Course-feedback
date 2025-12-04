@@ -11,11 +11,11 @@
             <div>
                 <form action="manage?action=update&pkval={{ obj.data[0][obj.pk] }}" method="POST">
                     Name:<br>
-                    <input type="text" name="name" value="{{ obj.data[0].UserName }}" />
+                    <input type="text" name="name" value="{{ obj.data[0].name }}" />
                     <br>
 
                     Email:<br>
-                    <input type="text" name="email" value="{{ obj.data[0].Email }}" />
+                    <input type="text" name="email" value="{{ obj.data[0].email }}" />
                     <br>
 
                     Password:<br>
@@ -25,7 +25,7 @@
                     Retype Password:<br>
                     <input type="password" name="password2" value="" />
                     <br>
-
+                    {% if  session.get('role') == 'admin' %}
                     Role:<br>
                     <select name="role">
                         {% for role in obj.roles %}
@@ -36,6 +36,7 @@
                             {% endif %}
                         {% endfor %}  
                     </select>
+                     {% endif %}
                     <br>
                     <br>
                     <input type="submit" value="Submit" />
@@ -43,7 +44,7 @@
 
                 <div>
                     <br><br>
-                    <a href="/users/manage?pkval={{ obj.data[0][obj.pk] }}&action=delete">Delete this User</a>
+                    <a class="button button-delete" href="/users/manage?pkval={{ obj.data[0][obj.pk] }}&action=delete">Delete this User</a>
                 </div>
                 
             </div>

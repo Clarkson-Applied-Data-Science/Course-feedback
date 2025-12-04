@@ -8,22 +8,24 @@
 	            <div>
                 
 
-                <div> <a href="manage?pkval=new">Create new</a> </div>
+                <div> <a class="button button-create" href="manage?pkval=new">Create new</a> </div>
 
-                <table>
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>Edit</th>
                             <th>Email</th>
                             <th>Name</th>
+                            <th>Role</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for obj in obj.data  %}
                         <tr>
-                            <td><a href="manage?pkval={{ obj.UserId }}">Edit</a></td>
-                            <td>{{ obj.Email }}</td>
-                            <td>{{ obj.UserName }}</td>
+                            <td><a class="button button-edit" href="manage?pkval={{ obj.uuid }}">Edit</a></td>
+                            <td>{{ obj.email }}</td>
+                            <td>{{ obj.name }}</td>
+                            <td>{{ obj.role }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

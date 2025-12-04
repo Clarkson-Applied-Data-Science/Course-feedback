@@ -22,8 +22,24 @@ sess.init_app(app)
 def home():
     if checkSession() == False:
         return redirect('/login')
-    return render_template('main.html', title='Home', msg='')
+    return redirect('main')
 
+@app.route('/main')
+def main():
+    if checkSession() == False:
+        return redirect('/login')
+    print("main loaded")
+    u = user() 
+    u.get_admin_stats()
+    c = course()
+    c.get_course_stats_by_department()
+    f = feedback()
+    return render_template('main.html', title='Main menu', stats={
+        "users": u.data,
+        "courses": c.data,
+        "pending_feedback": f.get_pending_feedback_count(),
+        "new_suggestions_course": c.get_new_course_stats(),
+    })
 
 @app.context_processor
 def inject_user():
@@ -56,6 +72,8 @@ def login():
 def logout():
     if session.get('user') is not None:
         del session['user']
+        del session['user_id']
+        del session['role']
         del session['active']
     return render_template('login.html', title='Login', msg='You have logged out.')
 
@@ -69,7 +87,12 @@ def manage_user():
     pkval = request.args.get('pkval')
     if action is not None and action == 'delete':
         o.deleteById(pkval)
-        return render_template('ok_dialog.html', msg=f"Record ID {pkval} Deleted.")
+        del session['user']
+        del session['user_id']
+        del session['role']
+        del session['active']
+        return render_template('login.html', title='Login', msg='You have logged out.')
+
     if action is not None and action == 'insert':
         d = {}
         d['name'] = request.form.get('name')
@@ -112,19 +135,23 @@ def manage_course():
         return redirect('/login')
     o = course() 
     action = request.args.get('action')
+    suggest = request.args.get('suggest')
     pkval = request.args.get('pkval')
     if action is not None and action == 'delete':
         o.deleteById(pkval)
         return render_template('ok_dialog.html', msg=f"Record ID {pkval} Deleted.")
     
-    if action is not None and action == 'insert':
+    if action is not None and (action == 'insert'):
         d = {}
         d['courseName'] = request.form.get('courseName')
         d['description'] = request.form.get('description')
-        d['semesterOffered'] = request.form.get('semesterOffered')
-        d['startDate'] = request.form.get('startDate')
-        d['endDate'] = request.form.get('endDate')
         d['departments'] = request.form.get('departments')
+        if suggest is None:
+            d['semesterOffered'] = request.form.get('semesterOffered')
+            d['startDate'] = request.form.get('startDate')
+            d['endDate'] = request.form.get('endDate')
+        else:
+            d['isSuggestedBy'] = session['user_id']
         o.set(d)
         if o.verify_new():
             o.insert()
@@ -247,12 +274,7 @@ def session_test():
     return f"{session}"
 
 
-@app.route('/main')
-def main():
-    if checkSession() == False:
-        return redirect('/login')
-    print("main loaded")
-    return render_template('main.html', title='Main menu')
+
 
 
 @app.route('/static/<path:path>')
@@ -279,10 +301,19 @@ def list_courses():
         return redirect('/login')
     o = course()
     courseID = request.args.get('courseID')
-    if courseID is None:
+    if courseID is None: 
         o.getAll()
         return render_template('courses/list.html', obj=o)
 
+@app.route('/courses/suggest_course')
+def suggest_courses():
+    if checkSession() == False:
+        return redirect('/login')
+    o= course()
+    o.createBlank()
+    o.data[0]['departments'] = ["Data science", 'Computer Science', 'Mathematics', 'Physics', 'Chemistry']
+    return render_template('courses/suggest_course.html', obj=o)
+    
 @app.route('/feedbacks/give_feedback')
 def list_feedback():
     if checkSession() == False:

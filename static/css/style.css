@@ -182,3 +182,39 @@ strong {
 .button-create{
 background-color: #fd8d58; 
 }
+
+
+.dashboard-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  min-width: 150px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.stat-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.dashboard-section {
+  margin-top: 2rem;
+}
+
+.activity-list {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
