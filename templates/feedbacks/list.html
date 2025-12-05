@@ -14,8 +14,8 @@
             <thead>
                 <tr> 
                      {% if session.get('role') == 'student' or session.get("role") == 'alumni' %}
-                        <th>Edit</th>
-                        {%else%}
+                        <th>Edit</th>{%endif%}
+                       {% if session.get('role') == 'admin' %}
                           <th>Approve</th>
                           {%endif%}
                     <th>Feedback Text</th>
@@ -27,20 +27,19 @@
             <tbody>
                 {% for feedback in obj.data %}
                 <tr>
-                    {% if feedback.status == 'pending' %} 
+
+                    {% if feedback.status == 'pending' and session.get('role') != 'instructor' %} 
                         <td>
                             {% if session.get('role') == 'student' or session.get("role") == 'alumni'%}
                             <a class="button button-edit" href="manage?pkval={{ feedback.feedbackID }}">
                                 Edit
-                            </a>
-                            {% else %}
+                            </a> {%endif%}
+                             {% if session.get('role') == 'admin' %}
                             <a class="button button-edit" href="manage?action=update&pkval={{ feedback.feedbackID }}">
                                 Approve
                             </a>
                             {% endif %}
                         </td>
-                    {% else %}
-                        <td></td>
                     {% endif %}
                     
                     <td>{{ feedback.feedbackText }}</td>

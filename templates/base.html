@@ -41,6 +41,10 @@
 
         <a href="/feedbacks/list_feedback">My Feedback</a>
           {% endif %}
+          {% if session.get("role") == 'instructor' %}
+          <a href="/feedbacks/list_feedback">My Feedback</a>
+            {% endif %}
+
         {% if session.get("role") == 'admin'%}
           <a href="/feedbacks/list_feedback">Approve Feedback</a>
            {% endif %}

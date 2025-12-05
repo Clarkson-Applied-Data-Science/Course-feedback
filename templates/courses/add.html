@@ -73,7 +73,20 @@
         {% endif %}
       {% endfor %}
     </select>
-  </div>
+  </div> 
+<div class="form-group">
+  <label for="instructor">Instructor</label>
+  <select id="instructor" name="instructor"> 
+   
+    {% for instructor in obj.data[0].instructors %}
+      {% if obj.data[0].instructor == instructor.uuid %}
+        <option value="{{ instructor.uuid }}" selected="selected">{{ instructor.name }}</option>
+      {% else %}
+        <option value="{{ instructor.uuid }}">{{ instructor.name }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+</div>
 
   <div class="form-group">
     <input type="submit" value="Submit" />
