@@ -9,6 +9,34 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	outline: 0;
 	padding: 0;
  
+} 
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 14px;
+}
+ 
+.data-table thead th {
+  background-color: #f4f4f4;    
+  font-weight: 600;
+  padding: 8px 10px;
+  border-bottom: 2px solid #ddd;
+  text-align: left;
+}
+ 
+.data-table tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;   
+}
+ 
+.data-table tbody tr:nth-child(odd) {
+  background-color: #fafafa;      
+}
+ 
+.data-table tbody tr:hover {
+  background-color: #eaeaea;
 }
 
 html,
@@ -49,6 +77,58 @@ body {
 
 body {
 	background: #fff;
+} 
+.title-header{
+	 max-width: 600px;        
+  margin: 20px auto;  
+}
+form {
+  max-width: 600px;        
+  margin: 20px auto;       
+}
+ 
+.form-group {
+  margin-bottom: 16px;      
+}
+ 
+form label {
+  display: block;
+  margin-bottom: 6px;      
+  font-weight: 600;
+}
+ 
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form select,
+form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+  box-sizing: border-box;
+}
+ 
+form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+ 
+form button,
+form input[type="submit"] {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+form button:hover,
+form input[type="submit"]:hover {
+  background: #0056b3;
 }
 
 article,
@@ -131,13 +211,13 @@ h5,
 h6 {
 	clear: both;
 	font-weight: 700;
-	font-family: 'Raleway', arial, sans-serif;
+	font-family: 'Raleway', arial, sans-serif; 
 }
 .title{
 	font-size: 2.5rem;
 	margin-bottom: 20px;
 	font-weight: 700;
-	text-align: left;
+	text-align: center;
 
 }
 p {

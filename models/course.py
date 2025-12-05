@@ -1,13 +1,9 @@
-
-from pathlib import Path
-import pymysql
-import datetime
 from models.baseObject import baseObject
-import hashlib
-
 class course(baseObject):
     def __init__(self):
-        self.setup()   
+        self.setup()  
+        self.departments =  ["Data science", 'Computer Science', 'Mathematics', 'Physics', 'Chemistry']
+        self.semester = ["Fall", "Spring", "Summer"]
     def verify_new(self):
         self.errors = []
         #
@@ -41,7 +37,7 @@ class course(baseObject):
         if not values:   
             return self.getAll()
         placeholders = ','.join(['%s'] * len(values))
-        sql = f"SELECT role, COUNT(*) AS cnt FROM `{self.tn}` WHERE `{fieldname}` NOT IN ({placeholders});"
+        sql = f"SELECT * FROM `{self.tn}` WHERE `{fieldname}` NOT IN ({placeholders});"
         self.cur.execute(sql, values)
 
         for row in self.cur:
@@ -60,5 +56,29 @@ class course(baseObject):
         self.cur.execute(sql)
         row = self.cur.fetchone()
         return row["cnt"]
+    def get_stats_courses_by_department(self):
+        self.data = []
+        sql = f'''
+            SELECT departmentName, COUNT(*) AS count
+            FROM `{self.tn}`
+            GROUP BY departmentName
+        '''
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+        self.data = rows
+        return rows
+    def get_stats_avg_courses_per_department(self):
+        sql = f'''
+            SELECT AVG(course_count) AS avg_courses_per_department
+            FROM (
+              SELECT departmentName, COUNT(*) AS course_count
+              FROM `{self.tn}`
+              GROUP BY departmentName
+            ) t
+        '''
+        self.cur.execute(sql)
+        row = self.cur.fetchone()
+        return row["avg_courses_per_department"] or 0
+
             
      

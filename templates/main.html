@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Main menu</h1>
+<div class="title-header"> 
+     
 
   {% if me.role == 'admin' %}
-    <h2>Admin Dashboard</h2>
+    <h2  class="title">Admin Dashboard</h2>
   
-
+</div>
     <div class="dashboard-cards"> 
       <div class="stat-card">
         <h3>Total Users</h3>
@@ -51,17 +52,119 @@
       </div>
  
       <div class="stat-card">
-        <h3>Pending Feedback</h3>
-        <p class="stat-value">{{ stats.pending_feedback | default(0) }}</p>
-      </div>
+      <h3>Pending Feedback</h3>
+      <p class="stat-value">{{ stats.pending_feedback | default(0) }}</p>
+
+      <h4>Feedback Length Distribution</h4>
+      <ul class="activity-list">
+        {% for row in stats.feedback_length_distribution %}
+          <li>
+            <strong>{{ row.bucket }}</strong>: {{ row.count }}
+          </li>
+        {% endfor %}
+      </ul>
     </div>
 
-    <section class="dashboard-section">
-      <h3>Other</h3>
-      <ul class="activity-list">
-        <li>New course suggestions: {{ stats.new_suggestions_course | default(0) }}</li>
-      </ul>
-    </section>
+    </div>
+
+   <div class="dashboard-cards"> 
+      <div class="stat-card"> 
+ <h3>New course suggestions</h3>
+  <p class="stat-value"> {{ stats.new_suggestions_course | default(0) }}</p>
+        </div>
+         <div class="stat-card"> 
+         <h3>Avg courses per department</h3>
+        <p class="stat-value">   {{ stats.avg_courses_per_department | round(2) }}</p>
+        </div>
+</div>
+<section class="dashboard-section">
+  <h3>Feedback by Course (Max / Avg Length)</h3>
+
+  <canvas id="feedbackByCourseChart"></canvas>
+
+  <script>
+    const feedbackByCourse = {{ stats.feedback_char_by_course | tojson | safe }};
+    const labels = feedbackByCourse.map(row => row.course);
+    const feedbackCounts = feedbackByCourse.map(row => row.feedback_count);
+    const maxChars = feedbackByCourse.map(row => row.max_chars);
+    const avgChars = feedbackByCourse.map(row => row.avg_chars);
+    const ctx = document.getElementById('feedbackByCourseChart').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '# Feedback',
+            data: feedbackCounts,
+            yAxisID: 'y',
+          },
+          {
+            label: 'Max Length (chars)',
+            data: maxChars,
+            yAxisID: 'y1',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'left',
+            title: { display: true, text: '# Feedback' }
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            title: { display: true, text: 'Chars' },
+            grid: { drawOnChartArea: false }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: false
+          }
+        }
+      }
+    });
+  </script>
+</section>
+
+ 
+<section class="dashboard-section">
+  <h3>Feedback by User</h3>
+  <table class="activity-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Total Feedback</th>
+        <th>Avg Length (chars)</th>
+        <th>Avg # Responses</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in stats.feedback_by_user %}
+        <tr>
+          <td>{{ row.name }}</td>
+          <td>{{ row.feedback_count }}</td>
+          <td>{{ row.avg_chars | round(1) }}</td> 
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section> 
+
+
+
   {% endif %}
 
 {% endblock %}

@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="title">Feedbacks</h1>
-    
-    <br><br>
+   <div class="title-header">  <h1 class="title">Feedbacks</h1></div>
+     
 
     <div>
+         {% if session.get('role') == 'student' %}
         <div>
             <a class="button button-create" href="manage?pkval=new">Create new</a>
         </div>
-
+  {% endif %}
         <table class="data-table">
             <thead>
                 <tr> 
-                        <th>Edit</th> 
+                     {% if session.get('role') == 'student' or session.get("role") == 'alumni' %}
+                        <th>Edit</th>
+                        {%else%}
+                          <th>Approve</th>
+                          {%endif%}
                     <th>Feedback Text</th>
                     <th>Course Name</th>
                     <th>Date Given</th>
@@ -25,9 +29,15 @@
                 <tr>
                     {% if feedback.status == 'pending' %} 
                         <td>
+                            {% if session.get('role') == 'student' or session.get("role") == 'alumni'%}
                             <a class="button button-edit" href="manage?pkval={{ feedback.feedbackID }}">
                                 Edit
                             </a>
+                            {% else %}
+                            <a class="button button-edit" href="manage?action=update&pkval={{ feedback.feedbackID }}">
+                                Approve
+                            </a>
+                            {% endif %}
                         </td>
                     {% else %}
                         <td></td>

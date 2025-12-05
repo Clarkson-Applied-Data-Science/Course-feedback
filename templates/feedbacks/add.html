@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="error_text">
+    <div class="error_text title-header">
         {% if obj.errors | length > 0 %}
             {% for error in obj.errors  %}
                 <div>{{ error }}</div>
@@ -10,29 +10,37 @@
     </div>
 
     <div>
-        <form action="manage?action=insert" method="POST">
-            Feedback Text:<br>
-            <textarea name="feedbackText">{{ obj.data[0].feedbackText | default('', true) }}</textarea>
-            <br>
+       <form action="manage?action=insert" method="POST">
+  <div class="form-group">
+    <label for="feedbackText">Feedback Text</label>
+    <textarea
+      id="feedbackText"
+      name="feedbackText"
+      rows="5"
+    >{{ obj.data[0].feedbackText | default('', true) }}</textarea>
+  </div>
 
-            Course:<br>
-            <select name="courseID"> 
-                {% for course_id, course_name in obj.data[0].courses.items() %}
-                    {% if obj.data[0].courseID == course_id %}
-                        <option value="{{ course_id }}" selected="selected">
-                            {{ course_name }}
-                        </option>
-                    {% else %}
-                        <option value="{{ course_id }}">
-                            {{ course_name }}
-                        </option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-            <br>
-             
+  <div class="form-group">
+    <label for="courseID">Course</label>
+    <select id="courseID" name="courseID">
+      {% for course_id, course_name in obj.data[0].courses.items() %}
+        {% if obj.data[0].courseID == course_id %}
+          <option value="{{ course_id }}" selected="selected">
+            {{ course_name }}
+          </option>
+        {% else %}
+          <option value="{{ course_id }}">
+            {{ course_name }}
+          </option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
 
-            <input type="submit" value="Submit" />
-        </form>
+  <div class="form-group">
+    <input type="submit" value="Submit" />
+  </div>
+</form>
+
     </div>
 {% endblock %}

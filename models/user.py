@@ -1,7 +1,3 @@
-
-from pathlib import Path
-import pymysql
-import datetime
 from models.baseObject import baseObject
 import hashlib
 
@@ -94,4 +90,29 @@ class user(baseObject):
         for row in self.cur:
              self.data.append({row["role"]: row["cnt"] }) 
         
-            
+    def get_stats_users_by_role(self):
+        self.data = []
+        sql = f'''
+            SELECT role, COUNT(*) AS count
+            FROM `{self.tn}`
+            GROUP BY role'''
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+        self.data = rows
+        return rows 
+    def get_stats_feedback_by_user(self):
+        self.data = []
+        sql = f"""
+            SELECT u.uuid,
+                   u.name AS name,
+                   COUNT(f.feedbackID) AS feedback_count,
+                   AVG(LENGTH(f.feedbackText)) AS avg_chars
+            FROM `{self.tn}` f
+            JOIN users u ON u.uuid = f.uuid
+            GROUP BY u.uuid, u.name
+            ORDER BY feedback_count DESC
+        """
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+        self.data = rows
+        return rows

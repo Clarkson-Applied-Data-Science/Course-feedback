@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-            <div class="error_text">
+            <div class="error_text title-header">
                 {% if obj.errors | length > 0 %}
                     {% for error in obj.errors  %}
                         <div>{{ error }}</div>
@@ -9,43 +9,72 @@
 				{% endif %}
             </div>
             <div>
-                <form action="manage?action=update&pkval={{ obj.data[0][obj.pk] }}" method="POST">
-                    Name:<br>
-                    <input type="text" name="name" value="{{ obj.data[0].name }}" />
-                    <br>
+              <form action="manage?action=update&pkval={{ obj.data[0][obj.pk] }}" method="POST">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      value="{{ obj.data[0].name }}"
+    />
+  </div>
 
-                    Email:<br>
-                    <input type="text" name="email" value="{{ obj.data[0].email }}" />
-                    <br>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value="{{ obj.data[0].email }}"
+    />
+  </div>
 
-                    Password:<br>
-                    <input type="password" name="password" value="" />
-                    <br>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      value=""
+    />
+  </div>
 
-                    Retype Password:<br>
-                    <input type="password" name="password2" value="" />
-                    <br>
-                    {% if  session.get('role') == 'admin' %}
-                    Role:<br>
-                    <select name="role">
-                        {% for role in obj.roles %}
-                            {% if  obj.data[0].role == role.value %}
-                                <option selected="true" value="{{ role.value }}">{{ role.text }}</option>
-                            {% else %}
-                                <option value="{{ role.value }}">{{ role.text }}</option>
-                            {% endif %}
-                        {% endfor %}  
-                    </select>
-                     {% endif %}
-                    <br>
-                    <br>
-                    <input type="submit" value="Submit" />
-                </form>
+  <div class="form-group">
+    <label for="password2">Retype Password</label>
+    <input
+      type="password"
+      id="password2"
+      name="password2"
+      value=""
+    />
+  </div>
 
-                <div>
-                    <br><br>
+  {% if session.get('role') == 'admin' %}
+    <div class="form-group">
+      <label for="role">Role</label>
+      <select id="role" name="role">
+        {% for role in obj.roles %}
+          {% if obj.data[0].role == role.value %}
+            <option selected="true" value="{{ role.value }}">{{ role.text }}</option>
+          {% else %}
+            <option value="{{ role.value }}">{{ role.text }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+
+  <div class="form-group">
+    <input type="submit" value="Submit" />
+  </div>
+  <div> 
                     <a class="button button-delete" href="/users/manage?pkval={{ obj.data[0][obj.pk] }}&action=delete">Delete this User</a>
                 </div>
+</form>
+
+
+                
                 
             </div>
 {% endblock %}

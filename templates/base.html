@@ -8,6 +8,8 @@
 	   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
  
        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}">
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     </head>
     <body>
        <header id="masthead" class="site-header" role="banner">
@@ -19,8 +21,9 @@
                     {% if session.get("user_id") %}
         <nav class="main-nav">
   <ul class="nav-list"> 
-    <li><a href="/">Home</a></li>
- {% if session.get("role") is not none %}
+    {% if session.get("role") is not none %}
+    
+ 
     <li class="dropdown">
       <button class="dropbtn">Courses &#9662;</button>
       <div class="dropdown-content">
@@ -29,15 +32,21 @@
       </div>
     </li>
   {% endif %}
- {% if session.get("role") == 'student' or session.get("role") == 'alumuni'%}
-    <li class="dropdown">
+  <li class="dropdown">
       <button class="dropbtn">Feedback &#9662;</button>
       <div class="dropdown-content">
+       {% if session.get("role") == 'student' or session.get("role") == 'alumni' %}
+  
         <a href="/feedbacks/manage?pkval=new">Give Feedback</a>
-        <a href="/feedbacks/give_feedback">My Feedback</a>
+
+        <a href="/feedbacks/list_feedback">My Feedback</a>
+          {% endif %}
+        {% if session.get("role") == 'admin'%}
+          <a href="/feedbacks/list_feedback">Approve Feedback</a>
+           {% endif %}
       </div>
     </li>
-  {% endif %}
+
     {% if session.get("role") == 'admin' %} 
     <li class="dropdown">
       <button class="dropbtn">Users &#9662;</button>

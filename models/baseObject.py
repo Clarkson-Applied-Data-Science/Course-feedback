@@ -1,9 +1,6 @@
 import yaml
 from pathlib import Path
-import pymysql
-import datetime
-
-
+import pymysql 
 class baseObject:
     def setup(self, config_path='config.yml'):
         self.fields = []
