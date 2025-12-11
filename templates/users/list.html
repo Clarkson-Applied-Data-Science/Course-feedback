@@ -8,7 +8,7 @@
 	            <div>
                 
 
-                <div> <a class="button button-create" href="manage?pkval=new">Create new</a> </div>
+                <div> <a class="button button-create" href="manage?create=new">Create new</a> </div>
 
                 <table class="data-table">
                     <thead>
@@ -22,7 +22,16 @@
                     <tbody>
                         {% for obj in obj.data  %}
                         <tr>
-                            <td><a class="button button-edit" href="manage?pkval={{ obj.uuid }}">Edit</a></td>
+                            <td>
+                                
+                            
+                    <form action="manage" method="POST" >
+  <input type="hidden" name="pkval" value="{{  obj.uuid }}">
+  <button type="submit" class="button button-edit">
+    Edit
+  </button>
+</form>        
+                            </td>
                             <td>{{ obj.email }}</td>
                             <td>{{ obj.name }}</td>
                             <td>{{ obj.role }}</td>

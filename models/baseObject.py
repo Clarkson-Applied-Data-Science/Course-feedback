@@ -1,6 +1,8 @@
 import yaml
 from pathlib import Path
-import pymysql 
+import pymysql
+
+
 class baseObject:
     def setup(self, config_path='config.yml'):
         self.fields = []
@@ -80,13 +82,15 @@ class baseObject:
         for row in self.cur:
             self.data.append(row)
 
-    def getByField(self, fieldname, value):
+    def getByField(self, fieldname, value, equate='='):
         self.data = []
-        sql = f'''SELECT * FROM `{self.tn}` WHERE `{fieldname}` = %s;'''
+        if value is None:
+            equate = 'IS'
+        sql = f'''SELECT * FROM `{self.tn}` WHERE `{fieldname}` {equate} %s;'''
         self.cur.execute(sql, [value])
         for row in self.cur:
             self.data.append(row)
-    
+
     def deleteById(self, id):
         sql = f'''DELETE FROM `{self.tn}` WHERE `{self.pk}` = %s;'''
         self.cur.execute(sql, [id])
@@ -100,6 +104,7 @@ class baseObject:
         for field in self.fields:
             d[field] = ''
         self.set(d)
+
     def getByFields(self, filters, op="AND"):
         self.data = []
 

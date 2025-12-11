@@ -7,7 +7,7 @@
     <div>
          {% if session.get('role') == 'student' %}
         <div>
-            <a class="button button-create" href="manage?pkval=new">Create new</a>
+            <a class="button button-create" href="manage?create=new">Create new</a>
         </div>
   {% endif %}
         <table class="data-table">
@@ -17,6 +17,7 @@
                         <th>Edit</th>{%endif%}
                        {% if session.get('role') == 'admin' %}
                           <th>Approve</th>
+                           <th>Disapprove</th>
                           {%endif%}
                     <th>Feedback Text</th>
                     <th>Course Name</th>
@@ -31,17 +32,41 @@
                     {% if feedback.status == 'pending' and session.get('role') != 'instructor' %} 
                         <td>
                             {% if session.get('role') == 'student' or session.get("role") == 'alumni'%}
-                            <a class="button button-edit" href="manage?pkval={{ feedback.feedbackID }}">
+                            <form action="manage" method="POST" style="display:inline;">
+                            <input type="hidden" name="pkval" value="{{ feedback.feedbackID }}">
+                            <button type="submit" class="button button-edit">
                                 Edit
-                            </a> {%endif%}
+                            </button>
+                            </form>
+
+                            {%endif%}
                              {% if session.get('role') == 'admin' %}
-                            <a class="button button-edit" href="manage?action=update&pkval={{ feedback.feedbackID }}">
+                            <form action="manage" method="POST" >
+                            <input type="hidden" name="pkval" value="{{ feedback.feedbackID }}">
+                            <button type="submit" class="button button-edit">
                                 Approve
-                            </a>
+                            </button>
+                            </form>
+
                             {% endif %}
                         </td>
+
+                        {% else%}
+                        <td></td>
                     {% endif %}
-                    
+                    {% if feedback.status == 'pending' and session.get('role') == 'admin' %} 
+                        
+             
+                             <td>  
+                            <form action="manage?action=delete" method="POST" >
+                            <input type="hidden" name="pkval" value="{{ feedback.feedbackID }}">
+                            <button type="submit" class="button button-edit">
+                                Delete/ Disapprove
+                            </button>
+                            </form>
+                            </td> 
+                      
+                    {% endif %}
                     <td>{{ feedback.feedbackText }}</td>
                     <td>{{ feedback.courseName }}</td>  
                     <td>{{ feedback.dateGiven }}</td>

@@ -1,31 +1,36 @@
 from models.baseObject import baseObject
 import hashlib
 
+
 class user(baseObject):
     def __init__(self):
         self.setup()
-        self.roles = [{'value':'admin','text':'admin'},
-                      {'value':'student','text':'student'},
-                      {'value':'instructor','text':'instructor'},
-                      {'value':'alumuni','text':'alumuni'}]
-    def hashPassword(self,pw):
+        self.roles = [{'value': 'admin', 'text': 'admin'},
+                      {'value': 'student', 'text': 'student'},
+                      {'value': 'instructor', 'text': 'instructor'},
+                      {'value': 'alumuni', 'text': 'alumuni'}]
+
+    def hashPassword(self, pw):
         pw = pw+'xyz'
         return hashlib.md5(pw.encode('utf-8')).hexdigest()
+
     def role_list(self):
         rl = []
         for item in self.roles:
             rl.append(item['value'])
         return rl
+
     def verify_new(self):
         self.errors = []
         #
         if '@' not in self.data[0]['email']:
             self.errors.append('Email must contain @')
         u = user()
-        u.getByField('email',self.data[0]['email'])
+        u.getByField('email', self.data[0]['email'])
         if len(u.data) > 0:
-            self.errors.append(f"Email address is already in use. ({self.data[0]['email']})")
-        
+            self.errors.append(
+                f"Email address is already in use. ({self.data[0]['email']})")
+
         if len(self.data[0]['password']) < 3:
             self.errors.append('Password should be greater than 3 chars.')
         if self.data[0]['password'] != self.data[0]['password2']:
@@ -34,62 +39,72 @@ class user(baseObject):
         del self.data[0]['password2']
         if self.data[0]['role'] not in self.role_list():
             self.errors.append(f"Role must be one of {self.role_list()}")
+        if self.data[0]['graduationDate'] == '':
+            self.data[0]['graduationDate'] = None
+        if self.data[0]['role'] == 'student' and self.data[0]['graduationDate'] == None:
+            self.errors.append(
+                'You need to set the graduation of the student.')
         #
-       
-        
+
         if len(self.errors) == 0:
             return True
         else:
             return False
+
     def verify_update(self):
         self.errors = []
         #
         if '@' not in self.data[0]['email']:
             self.errors.append('Email must contain @')
         u = user()
-        u.getByField('email',self.data[0]['email'])
+        u.getByField('email', self.data[0]['email'])
         if len(u.data) > 0 and u.data[0][u.pk] != self.data[0][self.pk]:
-            self.errors.append(f"Email address is already in use. ({self.data[0]['email']})")
-        
+            self.errors.append(
+                f"Email address is already in use. ({self.data[0]['email']})")
+
         if 'password2' in self.data[0].keys() and len(self.data[0]['password2']) > 0:
             if len(self.data[0]['password']) < 3:
                 self.errors.append('Password should be greater than 3 chars.')
             if self.data[0]['password'] != self.data[0]['password2']:
                 self.errors.append('Retyped password must match.')
-        
-            self.data[0]['password'] = self.hashPassword(self.data[0]['password'])
+
+            self.data[0]['password'] = self.hashPassword(
+                self.data[0]['password'])
         else:
             del self.data[0]['password']
         if self.data[0]['role'] not in self.role_list():
             self.errors.append(f"Role must be one of {self.role_list()}")
+
+        if self.data[0]['role'] == 'student' and self.data[0]['graduationDate'] == '':
+            self.errors.append(
+                'You need to set the graduation of the student.')
         #
-        
-        
         if len(self.errors) == 0:
             return True
         else:
             return False
-    
-    def tryLogin(self,un, pw):
-        #print(un,pw)
+
+    def tryLogin(self, un, pw):
+        # print(un,pw)
         pw = self.hashPassword(pw)
-        #print(un,pw)
+        # print(un,pw)
         self.data = []
         sql = f'''SELECT * FROM `{self.tn}` WHERE `email` = %s AND `password` = %s;'''
-        #print(sql,[un,pw])
-        self.cur.execute(sql,[un,pw])
+        # print(sql,[un,pw])
+        self.cur.execute(sql, [un, pw])
         for row in self.cur:
             self.data.append(row)
         if len(self.data) == 1:
             return True
         return False
+
     def get_admin_stats(self):
         self.data = []
         sql = f'''SELECT COUNT(*) as cnt,role FROM `{self.tn}` GROUP BY role;'''
         self.cur.execute(sql)
         for row in self.cur:
-             self.data.append({row["role"]: row["cnt"] }) 
-        
+            self.data.append({row["role"]: row["cnt"]})
+
     def get_stats_users_by_role(self):
         self.data = []
         sql = f'''
@@ -99,7 +114,8 @@ class user(baseObject):
         self.cur.execute(sql)
         rows = self.cur.fetchall()
         self.data = rows
-        return rows 
+        return rows
+
     def get_stats_feedback_by_user(self):
         self.data = []
         sql = f"""

@@ -37,17 +37,17 @@
       <div class="dropdown-content">
        {% if session.get("role") == 'student' or session.get("role") == 'alumni' %}
   
-        <a href="/feedbacks/manage?pkval=new">Give Feedback</a>
-
         <a href="/feedbacks/list_feedback">My Feedback</a>
+        <a href="/feedbacks/manage?create=new">Give Feedback</a>
           {% endif %}
           {% if session.get("role") == 'instructor' %}
-          <a href="/feedbacks/list_feedback">My Feedback</a>
+          <a href="/feedbacks/list_feedback">Feedback for my course</a>
             {% endif %}
 
         {% if session.get("role") == 'admin'%}
           <a href="/feedbacks/list_feedback">Approve Feedback</a>
            {% endif %}
+           
       </div>
     </li>
 
@@ -55,10 +55,10 @@
     <li class="dropdown">
       <button class="dropbtn">Users &#9662;</button>
       <div class="dropdown-content">
-        <a href="/users/manage?pkval=new">Add User</a>
+        <a href="/users/manage?create=new">Add User</a>
       </div>
       <div class="dropdown-content">
-        <a href="/users/manage">List User</a>
+        <a href="/users/list_users">List User</a>
       </div>
       
     </li>
@@ -67,7 +67,14 @@
    <li class="dropdown">
       <button class="dropbtn">Welcome {{ session.get("user")['name'] }} &#9662;</button>
       <div class="dropdown-content">
-        <a href="/users/manage?pkval={{ session.get("user_id") }}">Change password</a>
+
+         <form action="/users/manage" method="POST" >
+  <input type="hidden" name="pkval" value="{{  session.get("user_id")}}">
+  <button type="submit" class="button-menu" >
+    Change password
+  </button>
+</form>        
+ 
         <a href="/logout">Logout</a>
       </div>
     </li>

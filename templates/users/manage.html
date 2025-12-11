@@ -9,7 +9,8 @@
 				{% endif %}
             </div>
             <div>
-              <form action="manage?action=update&pkval={{ obj.data[0][obj.pk] }}" method="POST">
+              <form action="manage?action=update" method="POST">
+                <input type="hidden" name="pkval" value="{{ obj.data[0][obj.pk] }}" />
   <div class="form-group">
     <label for="name">Name</label>
     <input
@@ -49,7 +50,15 @@
       value=""
     />
   </div>
-
+<div class="form-group">
+    <label for="startDate">Graduation Date</label>
+    <input
+      type="date"
+      id="graduationDate"
+      name="graduationDate"
+      value="{{ obj.data[0].graduationDate | default('', true) }}"
+    />
+  </div>
   {% if session.get('role') == 'admin' %}
     <div class="form-group">
       <label for="role">Role</label>
@@ -67,14 +76,16 @@
 
   <div class="form-group">
     <input type="submit" value="Submit" />
-  </div>
-  <div> 
-                    <a class="button button-delete" href="/users/manage?pkval={{ obj.data[0][obj.pk] }}&action=delete">Delete this User</a>
-                </div>
+  </div> 
 </form>
-
-
-                
+<form action="manage?action=delete" method="POST">
+  <div class="form-group"> 
+  <input type="hidden" name="pkval" value="{{ obj.data[0][obj.pk] }}">
+  <button type="submit" class="button button-delete">
+    Delete this User
+  </button>
+  </div>
+</form> 
                 
             </div>
 {% endblock %}

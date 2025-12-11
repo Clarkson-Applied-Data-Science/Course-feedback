@@ -18,6 +18,12 @@ class feedback(baseObject):
         if len(f.data) > 0:
             self.errors.append(f"You alread gave a feedback for this course.")
 
+        feedback_length = len(self.data[0]['feedbackText'].strip())
+        if feedback_length < 100 or feedback_length > 300:
+            self.errors.append(
+                "Your feedback must be between 100 and 300 characters."
+            )
+
         if len(self.errors) == 0:
             return True
         else:
@@ -33,7 +39,11 @@ class feedback(baseObject):
 
         if len(f.data) > 0:
             self.errors.append(f"You already gave a feedback for this course.")
-
+        feedback_length = len(self.data[0]['feedbackText'].strip())
+        if feedback_length < 100 or feedback_length > 300:
+            self.errors.append(
+                "Your feedback must be between 100 and 300 characters."
+            )
         if len(self.errors) == 0:
             return True
         else:

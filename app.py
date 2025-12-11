@@ -19,10 +19,18 @@ sess = Session()
 sess.init_app(app)
 
 
+@app.route('/')
+def home():
+    return redirect('/main')
+
+
 @app.route('/main')
 def main():
     if checkSession() == False:
         return redirect('/login')
+    if session['role'] != 'admin':
+        return redirect('/courses/list_courses')
+
     u = user()
     c = course()
     f = feedback()
@@ -41,6 +49,8 @@ def main():
     feedback_char_by_course = f.get_stats_feedback_char_by_course()
     avg_courses_per_department = c.get_stats_avg_courses_per_department()
     return render_template('main.html', title='Main menu', stats={
+        "total_users": sum([list(d.values())[0] for d in stats_users]),
+        "total_courses": sum([list(d.values())[0] for d in stats_courses]),
         "users": stats_users,
         "courses": stats_courses,
         "pending_feedback": pending_feedback,
@@ -98,7 +108,8 @@ def manage_user():
         return redirect('/login')
     o = user()
     action = request.args.get('action')
-    pkval = request.args.get('pkval')
+    pkval = request.form.get('pkval')
+    create = request.args.get('create')
     if action is not None and action == 'delete':
         o.deleteById(pkval)
         del session['user']
@@ -114,6 +125,8 @@ def manage_user():
         d['role'] = request.form.get('role')
         d['password'] = request.form.get('password')
         d['password2'] = request.form.get('password2')
+        d['graduationDate'] = request.form.get('graduationDate')
+
         o.set(d)
         if o.verify_new():
             o.insert()
@@ -127,16 +140,14 @@ def manage_user():
         o.data[0]['role'] = request.form.get('role')
         o.data[0]['password'] = request.form.get('password')
         o.data[0]['password2'] = request.form.get('password2')
+        o.data[0]['graduationDate'] = request.form.get('graduationDate')
         if o.verify_update():
             o.update()
             return render_template('ok_dialog.html', msg="User updated. ")
         else:
             return render_template('users/manage.html', obj=o)
 
-    if pkval is None:
-        o.getAll()
-        return render_template('users/list.html', obj=o)
-    if pkval == 'new':
+    if create == 'new':
         o.createBlank()
         return render_template('users/add.html', obj=o)
     else:
@@ -152,16 +163,15 @@ def manage_course():
     u = user()
     action = request.args.get('action')
     suggest = request.args.get('suggest')
-    pkval = request.args.get('pkval')
+    create = request.args.get('create')
+    pkval = request.form.get('pkval')
     if action is not None and action == 'delete':
         o.deleteById(pkval)
         return render_template('ok_dialog.html', msg=f"Record ID {pkval} Deleted.")
-
-    if action is not None and (action == 'insert'):
+    if action is not None and action == 'insert':
         d = {}
         d['courseName'] = request.form.get('courseName')
         d['description'] = request.form.get('description')
-        d['departments'] = request.form.get('departments')
         d['semesterOffered'] = request.form.get('semesterOffered')
         d['departmentName'] = request.form.get('department')
         d['startDate'] = request.form.get('startDate')
@@ -173,9 +183,16 @@ def manage_course():
         o.set(d)
         if o.verify_new():
             o.insert()
-            return render_template('ok_dialog.html', msg=f"Course {o.data[0][o.pk]} added.")
+            return render_template('ok_dialog.html', msg="Course added.")
         else:
-            return render_template('courses/add.html', obj=o)
+            if suggest is None:
+                o.data[0]['departments'] = o.departments
+                o.data[0]['semester'] = o.semester
+                u.getByField('role', 'instructor')
+                o.data[0]['instructors'] = u.data
+                return render_template('courses/add.html', obj=o)
+            else:
+                return render_template('courses/suggest_course.html', obj=o)
     if action is not None and action == 'update':
         o.getById(pkval)
 
@@ -192,24 +209,25 @@ def manage_course():
             o.update()
             return render_template('ok_dialog.html', msg="Course updated. ")
         else:
+            o.data[0]['departments'] = o.departments
+            o.data[0]['semester'] = o.semester
+            u.getByField('role', 'instructor')
+            o.data[0]['instructors'] = u.data
             return render_template('courses/manage.html', obj=o)
 
-    if pkval is None:
-        o.getAll()
-        return render_template('courses/list.html', obj=o)
-    if pkval == 'new':
+    if create == 'new':
         o.createBlank()
-        o.data[0]['departments'] = ["Data science",
-                                    'Computer Science', 'Mathematics', 'Physics', 'Chemistry']
+        o.data[0]['departments'] = o.departments
         o.data[0]['semester'] = o.semester
         u.getByField('role', 'instructor')
         o.data[0]['instructors'] = u.data
         return render_template('courses/add.html', obj=o)
     else:
         o.getById(pkval)
-        o.data[0]['departments'] = ["Data science",
-                                    'Computer Science', 'Mathematics', 'Physics', 'Chemistry']
+        o.data[0]['departments'] = o.departments
         o.data[0]['semester'] = o.semester
+        u.getByField('role', 'instructor')
+        o.data[0]['instructors'] = u.data
         return render_template('courses/manage.html', obj=o)
 
 
@@ -219,7 +237,8 @@ def manage_feedback():
         return redirect('/login')
     o = feedback()
     action = request.args.get('action')
-    pkval = request.args.get('pkval')
+    create = request.args.get('create')
+    pkval = request.form.get('pkval')
 
     if action is not None and action == 'delete':
         o.deleteById(pkval)
@@ -238,16 +257,19 @@ def manage_feedback():
             o.insert()
             return render_template('ok_dialog.html', msg=f"Feedback {o.data[0][o.pk]} added.")
         else:
+            f = feedback()
+            f.getByFields({"uuid": session['user_id']}, op="AND")
+            given_course_ids = [row['courseID'] for row in f.data]
             c = course()
-            c.getAll()
-            o.data[0]['courses'] = {row['courseID']                                    : row['courseName'] for row in c.data}
+            c.getNotIn('courseID', given_course_ids)
+            o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
             return render_template('feedbacks/add.html', obj=o)
-
     if action is not None and action == 'update':
         o.getById(pkval)
         if session['role'] == 'admin':
             o.data[0]['status'] = "approved"
         else:
+            print(o)
             o.data[0]['feedbackText'] = request.form.get('feedbackText')
             o.data[0]['courseID'] = request.form.get('courseID')
 
@@ -255,36 +277,28 @@ def manage_feedback():
             o.update()
             return render_template('ok_dialog.html', msg="Feedback updated.")
         else:
+            f = feedback()
+            f.getByFields({"uuid": session['user_id']}, op="AND")
+            given_course_ids = [row['courseID'] for row in f.data]
             c = course()
-            c.getAll()
-            o.data[0]['courses'] = {row['courseID']                                    : row['courseName'] for row in c.data}
+            c.getNotIn('courseID', given_course_ids)
+            o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
             return render_template('feedbacks/manage.html', obj=o)
 
-    if pkval is None:
-        o.getAll()
-        return render_template('feedbacks/list.html', obj=o)
-
-    if pkval == 'new':
+    if create == 'new':
         o.createBlank()
-        f = feedback()
-        f.getByFields({"uuid": session['user_id']}, op="AND")
-        given_course_ids = [row['courseID'] for row in f.data]
-
-        c = course()
-        c.getNotIn('courseID', given_course_ids)
-        o.data[0]['courses'] = {row['courseID']                                : row['courseName'] for row in c.data}
-
-        return render_template('feedbacks/add.html', obj=o)
-
     else:
         o.getById(pkval)
-        f = feedback()
-        f.getByFields({"uuid": session['user_id']}, op="AND")
-        given_course_ids = [row['courseID'] for row in f.data]
 
-        c = course()
-        c.getNotIn('courseID', given_course_ids)
-        o.data[0]['courses'] = {row['courseID']                                : row['courseName'] for row in c.data}
+    f = feedback()
+    f.getByFields({"uuid": session['user_id']}, op="AND")
+    given_course_ids = [row['courseID'] for row in f.data]
+    c = course()
+    c.getNotIn('courseID', given_course_ids)
+    o.data[0]['courses'] = {row['courseID']: row['courseName'] for row in c.data}
+    if create == 'new':
+        return render_template('feedbacks/add.html', obj=o)
+    else:
         return render_template('feedbacks/manage.html', obj=o)
 
 
@@ -313,6 +327,17 @@ def checkSession():
         return False
 
 
+@app.route('/users/list_users')
+def list_users():
+    if checkSession() == False:
+        return redirect('/login')
+    o = user()
+    uuid = request.args.get('uuid')
+    if uuid is None:
+        o.getAll()
+        return render_template('users/list.html', obj=o)
+
+
 @app.route('/courses/list_courses')
 def list_courses():
     if checkSession() == False:
@@ -320,7 +345,7 @@ def list_courses():
     o = course()
     courseID = request.args.get('courseID')
     if courseID is None:
-        o.getAll()
+        o.getByField('isSuggestedBy', None)
         return render_template('courses/list.html', obj=o)
 
 
@@ -346,6 +371,7 @@ def list_feedback():
     if session['role'] == 'instructor':
         o.get_with_course_and_instructor(session['user_id'])
         return render_template('feedbacks/list.html', obj=o)
+
     feedbackID = request.args.get('feedbackID')
     if feedbackID is None and session['role'] != 'admin':
         o.getByField('uuid', session['user_id'])

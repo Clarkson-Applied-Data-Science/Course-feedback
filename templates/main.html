@@ -10,16 +10,7 @@
 </div>
     <div class="dashboard-cards"> 
       <div class="stat-card">
-        <h3>Total Users</h3>
- 
-        {% set total_users = 0 %}
-        {% for role_counts in stats.users %}
-          {% for role, count in role_counts.items() %}
-            {% set total_users = total_users + count %}
-          {% endfor %}
-        {% endfor %}
-
-        <p class="stat-value">{{ total_users }}</p>
+        <p class="stat-value">Total Users: {{ stats.total_users }} </p> 
 
         <ul class="activity-list">
           {% for role_counts in stats.users %}
@@ -31,16 +22,7 @@
       </div>
  
       <div class="stat-card">
-        <h3>Total Courses</h3>
-
-        {% set total_courses = 0 %}
-        {% for dept_counts in stats.courses %}
-          {% for dept, count in dept_counts.items() %}
-            {% set total_courses = total_courses + count %}
-          {% endfor %}
-        {% endfor %}
-
-        <p class="stat-value">{{ total_courses }}</p>
+         <p class="stat-value">Total Courses: {{ stats.total_courses }}</p>
 
         <ul class="activity-list">
           {% for dept_counts in stats.courses %}
@@ -51,30 +33,24 @@
         </ul>
       </div>
  
-      <div class="stat-card">
-      <h3>Pending Feedback</h3>
-      <p class="stat-value">{{ stats.pending_feedback | default(0) }}</p>
+      <div class="stat-card"> 
+      <p class="stat-value">Pending Feedback:{{ stats.pending_feedback }}</p>
 
-      <h4>Feedback Length Distribution</h4>
+      <p class="stat-value">Feedback Length Distribution: </p>
       <ul class="activity-list">
         {% for row in stats.feedback_length_distribution %}
           <li>
-            <strong>{{ row.bucket }}</strong>: {{ row.count }}
+            <span>{{ row.bucket }}</span>: {{ row.count }}
           </li>
         {% endfor %}
       </ul>
     </div>
 
-    </div>
-
-   <div class="dashboard-cards"> 
-      <div class="stat-card"> 
- <h3>New course suggestions</h3>
-  <p class="stat-value"> {{ stats.new_suggestions_course | default(0) }}</p>
+      <div class="stat-card">  
+  <p class="stat-value">New course suggestions: {{ stats.new_suggestions_course }}</p>
         </div>
-         <div class="stat-card"> 
-         <h3>Avg courses per department</h3>
-        <p class="stat-value">   {{ stats.avg_courses_per_department | round(2) }}</p>
+         <div class="stat-card">  
+        <p class="stat-value"> Avg courses per department:  {{ stats.avg_courses_per_department | round(2) }}</p>
         </div>
 </div>
 <section class="dashboard-section">

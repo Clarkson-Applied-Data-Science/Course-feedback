@@ -81,6 +81,11 @@ body {
 .title-header{
 	 max-width: 600px;        
   margin: 20px auto;  
+  
+}
+.go-back{
+	color:#333;
+	text-decoration: underline;
 }
 form {
   max-width: 600px;        
@@ -128,9 +133,15 @@ form input[type="submit"] {
 
 form button:hover,
 form input[type="submit"]:hover {
-  background: #0056b3;
+  background: #777;
 }
 
+.help-text {
+  font-size: 1rem;
+  color: #777;   
+  margin-top: 4px;
+  display: block;
+}
 article,
 aside,
 details,
@@ -161,6 +172,12 @@ td {
 	text-align: left;
 	padding: 10px 5px;
 	text-align: justify; 
+}
+td{
+	max-width: 50ch;       
+  white-space: normal;       
+  word-wrap: break-word;    
+  overflow-wrap: anywhere; 
 }
 th,td{
 	vertical-align: bottom;
@@ -197,7 +214,7 @@ input,
 select,
 textarea {
 	color: #333;
-	font-family: 'Helvetica Neue', arial, sans-serif;
+	font-family: 'Raleway','Helvetica Neue', arial, sans-serif;
 	font-size: 16px;
 	font-size: 1.6rem;
 	line-height: 1.6;
@@ -241,6 +258,9 @@ strong {
 	border-collapse: collapse; 
 	margin-bottom: 20px;
 }
+ 
+ 
+
 .button{ 
 	border: none; 
 	color: white; 
@@ -252,6 +272,24 @@ strong {
 	margin: 2px 1px; 
 	cursor: pointer; 
 	border-radius: 4px; 
+}
+.button-menu{
+	background: none;
+	border: none; 
+    text-decoration: none; 
+	color: #333;
+	font-weight: 500;
+	padding: 8px 12px;
+	margin: auto 0px;
+	width: 100%;
+	display: block;
+    font-size: 1.5rem;
+	text-align: left;
+	
+}
+
+.button-menu:hover{
+  background-color: #f2f2f2;
 }
 .button-edit{
 	background-color: #4CAF50;  

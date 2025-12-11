@@ -7,7 +7,7 @@
 	            <div>
                 
   {% if session.get("role") == 'admin' or session.get("role") == 'instructor' %} 
-                <div> <a class="button button-create" href="manage?pkval=new">Create new</a> </div>
+                <div> <a class="button button-create" href="manage?create=new">Create new</a> </div>
 {%endif%}
                 <table class="data-table">
                     <thead>
@@ -25,7 +25,16 @@
                         {% for obj in obj.data  %}
                         <tr>
                              {% if session.get("role") == 'admin' %} 
-                             <td><a class="button button-edit" href="manage?pkval={{ obj.courseID }}">Edit</a></td>
+                             <td>
+                                
+                            <form action="manage" method="POST" >
+  <input type="hidden" name="pkval" value="{{ obj.courseID }}">
+  <button type="submit" class="button button-edit">
+    Edit
+  </button>
+</form>
+
+                            </td>
                             {% endif %}
                              <td>{{ obj.courseName }}</td>
                             <td>{{ obj.description }}</td>
