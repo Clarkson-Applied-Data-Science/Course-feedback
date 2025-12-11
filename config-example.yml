@@ -5,3 +5,5 @@ db:
   db: ''
 tables:
   user: 'users'
+  course: 'courses'
+  feedback: 'feedbacks'
