@@ -8,7 +8,7 @@ class user(baseObject):
         self.roles = [{'value': 'admin', 'text': 'admin'},
                       {'value': 'student', 'text': 'student'},
                       {'value': 'instructor', 'text': 'instructor'},
-                      {'value': 'alumuni', 'text': 'alumuni'}]
+                      {'value': 'alumuni', 'text': 'alumni'}]
 
     def hashPassword(self, pw):
         pw = pw+'xyz'

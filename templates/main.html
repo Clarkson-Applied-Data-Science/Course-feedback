@@ -115,7 +115,55 @@
   </script>
 </section>
 
- 
+ <section class="dashboard-section">
+  <h3>Average Rating by Course</h3>
+
+  <canvas id="courseRatingsChart"></canvas>
+
+  <script>
+    const courseRatings = {{ stats.course_rating_avg | tojson | safe }};
+    const courseRatingLabels = courseRatings.map(row => row.courseName);
+    const courseAvgRatings   = courseRatings.map(row => row.avg_rating);
+
+    const ctxCourseRatings = document
+      .getElementById('courseRatingsChart')
+      .getContext('2d');
+
+    new Chart(ctxCourseRatings, {
+      type: 'bar',  // vertical bar chart
+      data: {
+        labels: courseRatingLabels,
+        datasets: [{
+          label: 'Average Rating',
+          data: courseAvgRatings,
+          // Chart.js will pick default colors; you can add backgroundColor if you want
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 5,  // rating scale 1–5
+            title: {
+              display: true,
+              text: 'Average rating (1–5)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          title: {
+            display: false
+          }
+        }
+      }
+    });
+  </script>
+</section>
+
 <section class="dashboard-section">
   <h3>Feedback by User</h3>
   <table class="activity-table">

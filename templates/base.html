@@ -35,12 +35,14 @@
   <li class="dropdown">
       <button class="dropbtn">Feedback &#9662;</button>
       <div class="dropdown-content">
-       {% if session.get("role") == 'student' or session.get("role") == 'alumni' %}
+       {% if session.get("role") in ['student' ,'alumni'] %}
   
         <a href="/feedbacks/list_feedback">My Feedback</a>
         <a href="/feedbacks/manage?create=new">Give Feedback</a>
           {% endif %}
+          
           {% if session.get("role") == 'instructor' %}
+          
           <a href="/feedbacks/list_feedback">Feedback for my course</a>
             {% endif %}
 

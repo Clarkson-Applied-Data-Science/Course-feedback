@@ -12,20 +12,7 @@
     <div> 
        <form action="manage?action=update" method="POST"> 
                 <input type="hidden" name="pkval" value="{{ obj.data[0][obj.pk] }}" />
-
-  <div class="form-group">
-    <label for="feedbackText">Feedback Text</label>
-    <textarea
-      id="feedbackText"
-      name="feedbackText"
-      rows="5"
-    >{{ obj.data[0].feedbackText }}</textarea>
-    <small id="feedbackHelp" class="help-text">
-    Feedback must be between 100 to 300 characters.
-  </small>
-  </div>
-
-  <div class="form-group">
+<div class="form-group">
     <label for="courseID">Course</label>
     <select id="courseID" name="courseID">
       {% for course_id, course_name in obj.data[0].courses.items() %}
@@ -37,6 +24,39 @@
       {% endfor %}
     </select>
   </div>
+  <div class="form-group">
+    <label for="feedbackText">Feedback Text</label>
+    <textarea
+      id="feedbackText"
+      name="feedbackText"
+      rows="5"
+    >{{ obj.data[0].feedbackText }}</textarea>
+    <small id="feedbackHelp" class="help-text">
+    Feedback must be between 100 to 300 characters.
+  </small>
+  </div>
+<div class="form-group">
+  <label for="rating">Rating</label>
+  <div class="rating-group">
+    {% for r in range(1, 6) %}
+      <label class="rating-option">
+        <input
+          type="radio"
+          id="rating-{{ r }}"
+          name="rating"
+          value="{{ r }}"
+          {% if obj.data[0].rating | default(0, true) == r %}checked{% endif %}
+        />
+        {{ r }}
+      </label>
+    {% endfor %}
+  </div>
+  <small id="ratingHelp" class="help-text">
+    Please rate this course from 1 (poor) to 5 (excellent).
+  </small>
+</div>
+
+  
 
   <div class="form-group">
     <input type="submit" value="Submit" />

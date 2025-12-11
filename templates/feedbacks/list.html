@@ -13,13 +13,15 @@
         <table class="data-table">
             <thead>
                 <tr> 
-                     {% if session.get('role') == 'student' or session.get("role") == 'alumni' %}
-                        <th>Edit</th>{%endif%}
+                     {% if session.get('role') in ['student', 'alumni'] %}
+                        <th>Edit</th>
+                    {%endif%}
                        {% if session.get('role') == 'admin' %}
                           <th>Approve</th>
                            <th>Disapprove</th>
                           {%endif%}
                     <th>Feedback Text</th>
+                    <th>Rating</th>
                     <th>Course Name</th>
                     <th>Date Given</th>
                     <th>Status</th> 
@@ -29,19 +31,19 @@
                 {% for feedback in obj.data %}
                 <tr>
 
-                    {% if feedback.status == 'pending' and session.get('role') != 'instructor' %} 
+                    {% if feedback.status == 'pending' and session.get('role') in ['student', 'alumni', 'admin'] %} 
                         <td>
-                            {% if session.get('role') == 'student' or session.get("role") == 'alumni'%}
+                            {% if session.get('role') in ['student', 'alumni']%}
                             <form action="manage" method="POST" style="display:inline;">
                             <input type="hidden" name="pkval" value="{{ feedback.feedbackID }}">
                             <button type="submit" class="button button-edit">
                                 Edit
                             </button>
                             </form>
-
                             {%endif%}
+
                              {% if session.get('role') == 'admin' %}
-                            <form action="manage" method="POST" >
+                            <form action="manage?action=update" method="POST" >
                             <input type="hidden" name="pkval" value="{{ feedback.feedbackID }}">
                             <button type="submit" class="button button-edit">
                                 Approve
@@ -50,13 +52,14 @@
 
                             {% endif %}
                         </td>
-
-                        {% else%}
-                        <td></td>
+                        {% else %}
+                            {% if session.get('role') in ['student', 'alumni'] %}
+                                <td></td>
+                            {% endif %}
                     {% endif %}
+                    
                     {% if feedback.status == 'pending' and session.get('role') == 'admin' %} 
                         
-             
                              <td>  
                             <form action="manage?action=delete" method="POST" >
                             <input type="hidden" name="pkval" value="{{ feedback.feedbackID }}">
@@ -68,6 +71,7 @@
                       
                     {% endif %}
                     <td>{{ feedback.feedbackText }}</td>
+                    <td>{{ feedback.rating }}</td>
                     <td>{{ feedback.courseName }}</td>  
                     <td>{{ feedback.dateGiven }}</td>
                     <td>{{ feedback.status }}</td> 

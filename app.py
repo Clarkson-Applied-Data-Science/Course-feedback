@@ -42,6 +42,7 @@ def main():
     stats_courses = [{row["departmentName"]: row["count"]}
                      for row in courses_by_dept]
 
+    course_rating_avg = f.get_stats_course_ratings()
     pending_feedback = f.get_stats_pending_count()
     new_suggestions_course = c.get_new_course_stats()
     feedback_by_user = f.get_stats_feedback_by_user()
@@ -58,6 +59,7 @@ def main():
         "feedback_by_user": feedback_by_user,
         "feedback_length_distribution": feedback_length_distribution,
         "feedback_char_by_course": feedback_char_by_course,
+        "course_rating_avg": course_rating_avg,
         "avg_courses_per_department": avg_courses_per_department,
     })
 
@@ -165,6 +167,7 @@ def manage_course():
     suggest = request.args.get('suggest')
     create = request.args.get('create')
     pkval = request.form.get('pkval')
+
     if action is not None and action == 'delete':
         o.deleteById(pkval)
         return render_template('ok_dialog.html', msg=f"Record ID {pkval} Deleted.")
@@ -192,6 +195,8 @@ def manage_course():
                 o.data[0]['instructors'] = u.data
                 return render_template('courses/add.html', obj=o)
             else:
+                o.data[0]['departments'] = o.departments
+                o.data[0]['semester'] = o.semester
                 return render_template('courses/suggest_course.html', obj=o)
     if action is not None and action == 'update':
         o.getById(pkval)
@@ -247,6 +252,7 @@ def manage_feedback():
     if action is not None and action == 'insert':
         d = {}
         d['feedbackText'] = request.form.get('feedbackText')
+        d['rating'] = request.form.get('rating')
         d['dateGiven'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         d['status'] = "pending"
         d['courseID'] = request.form.get('courseID')
@@ -271,12 +277,15 @@ def manage_feedback():
         else:
             print(o)
             o.data[0]['feedbackText'] = request.form.get('feedbackText')
+            o.data[0]['rating'] = request.form.get('rating')
             o.data[0]['courseID'] = request.form.get('courseID')
 
         if o.verify_update():
             o.update()
             return render_template('ok_dialog.html', msg="Feedback updated.")
         else:
+            if session['role'] == 'admin':
+                return redirect('/feedbacks/list_feedback')
             f = feedback()
             f.getByFields({"uuid": session['user_id']}, op="AND")
             given_course_ids = [row['courseID'] for row in f.data]

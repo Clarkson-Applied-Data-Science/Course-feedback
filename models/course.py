@@ -25,20 +25,26 @@ class course(baseObject):
             self.errors.append(
                 "Your course description must be between 250 and 600 characters."
             )
-        if self.data[0]['startDate'] == '' or self.data[0]['endDate'] == '':
+        if self.data[0]['departmentName'] is None:
             self.errors.append(
-                "Start date and end date must be provided."
+                "Department name must be provided."
             )
-        else:
+        if self.data[0]['isSuggestedBy'] is None:
             start = self.data[0]['startDate']
             end = self.data[0]['endDate']
-            if isinstance(start, str):
-                start = datetime.strptime(start, "%Y-%m-%d").date()
-            if isinstance(end, str):
-                end = datetime.strptime(end, "%Y-%m-%d").date()
+            if (start == '' or start is None) or (end == '' or end is None):
+                self.errors.append(
+                    "Start date and end date must be provided."
+                )
+            else:
+                if isinstance(start, str):
+                    start = datetime.strptime(start, "%Y-%m-%d").date()
+                if isinstance(end, str):
+                    end = datetime.strptime(end, "%Y-%m-%d").date()
 
-            if start > end:
-                self.errors.append("Start date cannot be later than end date.")
+                if start > end:
+                    self.errors.append(
+                        "Start date cannot be later than end date.")
         if len(self.errors) == 0:
             return True
         else:
@@ -60,20 +66,26 @@ class course(baseObject):
             self.errors.append(
                 "Your course description must be between 250 and 600 characters."
             )
-        if self.data[0]['startDate'] == '' or self.data[0]['endDate'] == '':
+        if self.data[0]['departmentName'] is None:
             self.errors.append(
-                "Start date and end date must be provided."
+                "Department name must be provided."
             )
-        else:
+        if self.data[0]['isSuggestedBy'] is None:
             start = self.data[0]['startDate']
             end = self.data[0]['endDate']
-            if isinstance(start, str):
-                start = datetime.strptime(start, "%Y-%m-%d").date()
-            if isinstance(end, str):
-                end = datetime.strptime(end, "%Y-%m-%d").date()
+            if (start == '' or start is None) or (end == '' or end is None):
+                self.errors.append(
+                    "Start date and end date must be provided."
+                )
+            else:
+                if isinstance(start, str):
+                    start = datetime.strptime(start, "%Y-%m-%d").date()
+                if isinstance(end, str):
+                    end = datetime.strptime(end, "%Y-%m-%d").date()
 
-            if start > end:
-                self.errors.append("Start date cannot be later than end date.")
+                if start > end:
+                    self.errors.append(
+                        "Start date cannot be later than end date.")
 
         if len(self.errors) == 0:
             return True

@@ -23,6 +23,8 @@ class feedback(baseObject):
             self.errors.append(
                 "Your feedback must be between 100 and 300 characters."
             )
+        if self.data[0]['rating'] is None:
+            self.errors.append(f"You have to add rating for this course.")
 
         if len(self.errors) == 0:
             return True
@@ -44,6 +46,9 @@ class feedback(baseObject):
             self.errors.append(
                 "Your feedback must be between 100 and 300 characters."
             )
+        if self.data[0]['rating'] is None:
+            self.errors.append(f"You have to add rating for this course.")
+
         if len(self.errors) == 0:
             return True
         else:
@@ -141,6 +146,29 @@ class feedback(baseObject):
             GROUP BY c.courseID, c.courseName
             ORDER BY feedback_count DESC
         """
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+        self.data = rows
+        return rows
+
+    def get_stats_course_ratings(self):
+        self.data = []
+        c = course()
+
+        sql = f'''
+            SELECT
+                f.courseID,
+                c.courseName AS courseName,
+                AVG(f.rating) AS avg_rating,
+                COUNT(*)      AS rating_count
+            FROM `{self.tn}` f
+            JOIN `{c.tn}`   c
+            ON c.courseID = f.courseID
+            WHERE f.status = 'approved' AND f.rating IS NOT NULL
+            GROUP BY f.courseID, c.courseName
+            ORDER BY avg_rating DESC
+        '''
+
         self.cur.execute(sql)
         rows = self.cur.fetchall()
         self.data = rows

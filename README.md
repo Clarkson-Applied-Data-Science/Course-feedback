@@ -3,6 +3,7 @@
 Group member names
 Eden Abdisa Gurmessa
 Sandhya Stalin
+Here is Loom video of the app: https://www.loom.com/share/2a6edd844da842c3be64ca9937c632e3
 
 ## 1. Project Overview
 
@@ -76,15 +77,17 @@ Key principles:
 
 - Clone the Repository
 - Take the config.example and add your own credentials
-- In the DB which you have created import the DB_mysql
-- The sql file has the populated data as well
-  The user password with their role is written below
+- In the DB which you have created import the DB_scheme
+- The sql file has the data populated in it too
+- The user password with their role is written below
   | Email | Password | Role |
   | ------------------------------------------------------- | ----------- | ---------- |
   | [edenabdisa90@gmail.com](mailto:edenabdisa90@gmail.com) | P2ssw0rd@90 | admin |
-  | [abigya@gmail.com](mailto:abigya@gmail.com) | P2ssw0rd@90 | almuni |
+  | [abigya@gmail.com](mailto:abigya@gmail.com) | P2ssw0rd@90 | alumni |
   | [delilah@gmail.com](mailto:delilah@gmail.com) | P2ssw0rd@90 | instructor |
   | [sandhya@gmail.com](mailto:sandhya@gmail.com) | P2ssw0rd@90 | student |
+
+If you are accessing the one from our then you have to select my database from mysql.clarksonmsda.org then use the gurmesea_course_feedback database
 
 # 7. Analytical queries
 
